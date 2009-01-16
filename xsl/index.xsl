@@ -18,7 +18,7 @@
 <xsl:template match="/">
 	<html>
 		<head>
-			<link rel="stylesheet" href="/s3/style.css" type="text/css" media="screen"/>
+			<link rel="stylesheet" href="/s3/css/style.css" type="text/css" media="screen"/>
 		</head>
 		<body>
 

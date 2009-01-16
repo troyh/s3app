@@ -6,6 +6,8 @@
 #include <libs3.h>
 #include <libxml/xmlwriter.h>
 
+const char* const APP_ROOT_DIR="/s3";
+
 const xmlChar* BinaryToXMLChar(unsigned int n)
 {
 	static xmlChar buf[1024];
@@ -139,7 +141,7 @@ S3Status my_S3ResponsePropertiesCallback(const S3ResponseProperties *properties,
 	if (data->continuing==false)
 	{
 		xmlTextWriterStartDocument(data->xmlwriter,NULL,NULL,NULL);
-		xmlTextWriterWriteFormatPI(data->xmlwriter,BAD_CAST "xml-stylesheet","type=\"text/xsl\" href=\"%s\"",data->xslname);
+		xmlTextWriterWriteFormatPI(data->xmlwriter,BAD_CAST "xml-stylesheet","type=\"text/xsl\" href=\"%s/xsl/%s\"",APP_ROOT_DIR,data->xslname);
 		xmlTextWriterStartElement(data->xmlwriter,BAD_CAST "response");
 		xmlTextWriterStartElement(data->xmlwriter,BAD_CAST "properties");
 		xmlTextWriterWriteElement(data->xmlwriter,BAD_CAST "requestId",BAD_CAST properties->requestId);

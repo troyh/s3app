@@ -1,18 +1,19 @@
 #!/bin/bash
 
-S3ROOT="/var/www/troyandgay.com/s3"
-WWWDIR="$S3ROOT/buckets"
+S3ROOT=".."
+BUCKETS_DIR="$S3ROOT/buckets"
+XMLDIR="$S3ROOT/xml"
 
 xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 	| while read BUCKET; do
 		
 	echo "Bucket: $BUCKET";
-	if [ ! -d $WWWDIR/$BUCKET ]; then
-		mkdir $WWWDIR/$BUCKET;
+	if [ ! -d $BUCKETS_DIR/$BUCKET ]; then
+		mkdir $BUCKETS_DIR/$BUCKET;
 	fi
 		
 	# Get list of directories
-	xmlstarlet sel -t -m //contents/key -v name -n $S3ROOT/$BUCKET.xml \
+	xmlstarlet sel -t -m //contents/key -v name -n $XMLDIR/$BUCKET.xml \
 		| grep / \
 		| sed -e 's:/[^/]*$:/:' \
 		| sort -u \
@@ -24,20 +25,20 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 
 		# Create the directory if it doesn't already exist
 		CDIR=`echo "$DIR" | sed -e 's/&amp;/\\&/g'`;
-		if [ ! -d "$WWWDIR/$BUCKET/$CDIR" ]; then
-			echo "Creating directory $WWWDIR/$BUCKET/$CDIR";
-			mkdir -p "$WWWDIR/$BUCKET/$CDIR";
+		if [ ! -d "$BUCKETS_DIR/$BUCKET/$CDIR" ]; then
+			echo "Creating directory $BUCKETS_DIR/$BUCKET/$CDIR";
+			mkdir -p "$BUCKETS_DIR/$BUCKET/$CDIR";
 		fi
 
-		echo "Creating $WWWDIR/$BUCKET/$CDIR/index.xml";
+		echo "Creating $BUCKETS_DIR/$BUCKET/$CDIR/index.xml";
 
-		xmlstarlet sel -t -m "//contents/key[starts-with(name,&quot;$DIR&quot;)]" -v name -o "&#09;" -c . -n "$S3ROOT/$BUCKET.xml" \
+		xmlstarlet sel -t -m "//contents/key[starts-with(name,&quot;$DIR&quot;)]" -v name -o "&#09;" -c . -n "$XMLDIR/$BUCKET.xml" \
 			| sed -e '/^\s*$/d' -e "s:$DIR::g" -e 's:/[^\t][^\t]*\t.*$:/:' \
 			| sort -u \
 			| sed -e 's/^.*\t//' \
 			| perl -ne 'chomp;if (/^<key/) {print "$_\n";} else { print "<dir><name>$_</name></dir>\n"; }' \
 			| sed -e "1i\
-			<?xml-stylesheet type=\"text/xsl\" href=\"/s3/index.xsl\"?>\
+			<?xml-stylesheet type=\"text/xsl\" href=\"/s3/xsl/index.xsl\"?>\
 			<contents>\
 			<meta>\
 				<bucketname>$BUCKET</bucketname>\
@@ -45,7 +46,7 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 			</meta>\
 			" \
 			-e '$a</contents>' \
-			> "$WWWDIR/$BUCKET/$CDIR/index.xml"
+			> "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml"
 	
 	done
 	
