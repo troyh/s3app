@@ -1,0 +1,65 @@
+body
+{
+	font-family: arial, verdana;
+	font-size:.8em;
+}
+
+#counts
+{
+	text-align:right;
+	color:#666;
+}
+
+table
+{
+	margin:0px;
+	padding:0px;
+	border:0px solid black;
+	width:100%;
+}
+
+th
+{
+	border-bottom:1px solid #eee;
+	margin:0px;
+	padding:0px;
+}
+
+th ~ th
+{
+	text-align:right;
+}
+
+
+td
+{
+	border-bottom:1px solid #eee;
+	margin:0px;
+	padding:0px;
+}
+
+td ~ td
+{
+	text-align:right;
+}
+
+tr:nth-last-child(-n+1) td
+{
+	border-top:1px solid #333;
+	background:silver;
+}
+
+td.dir
+{
+	font-weight:bold;
+}
+
+td a
+{
+	text-decoration:none;
+}
+
+td a:hover
+{
+	text-decoration:underline;
+}
