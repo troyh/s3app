@@ -4,8 +4,20 @@ S3ROOT=".."
 BUCKETS_DIR="$S3ROOT/buckets"
 XMLDIR="$S3ROOT/xml"
 
-xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
+SINGLE_BUCKET="";
+if [ "x$1" != "x" ]; then
+	SINGLE_BUCKET=$1;
+fi
+	
+
+xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -e '/^\s*$/d' \
 	| while read BUCKET; do
+	
+	if [ -n "$SINGLE_BUCKET" ]; then
+		if [ "$SINGLE_BUCKET" != "$BUCKET" ]; then
+			continue;
+		fi
+	fi
 		
 	echo "Bucket: $BUCKET";
 	if [ ! -d $BUCKETS_DIR/$BUCKET ]; then
@@ -13,7 +25,7 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 	fi
 		
 	# Get list of directories
-	xmlstarlet sel -t -m //contents/key -v name -n $XMLDIR/$BUCKET.xml \
+	xmlstarlet sel -t -m //contents/key -v name -n $XMLDIR/$BUCKET.xml | sed -e '/^\s*$/d' \
 		| grep / \
 		| sed -e 's:/[^/]*$:/:' \
 		| sort -u \
@@ -30,10 +42,10 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 			mkdir -p "$BUCKETS_DIR/$BUCKET/$CDIR";
 		fi
 
-		echo "Creating $BUCKETS_DIR/$BUCKET/$CDIR/index.xml";
+		# echo "Creating $BUCKETS_DIR/$BUCKET/$CDIR/index.xml";
 
 		xmlstarlet sel -t -m "//contents/key[starts-with(name,&quot;$DIR&quot;)]" -v name -o "&#09;" -c . -n "$XMLDIR/$BUCKET.xml" \
-			| sed -e '/^\s*$/d' -e "s:$DIR::g" -e 's:/[^\t][^\t]*\t.*$:/:' \
+			| sed -e '/^\s*$/d' -e "s|$DIR||g" -e 's:/[^\t][^\t]*\t.*$:/:' \
 			| sort -u \
 			| sed -e 's/^.*\t//' \
 			| perl -ne 'chomp;if (/^<key/) {print "$_\n";} else { print "<dir><name>$_</name></dir>\n"; }' \

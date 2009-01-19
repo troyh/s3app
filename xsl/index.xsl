@@ -69,7 +69,7 @@
 							<xsl:when test="name()='key'">
 								<td class="file">
 									<xsl:element name="a">
-										<xsl:attribute name="href"><xsl:value-of select="name"/></xsl:attribute>
+										<xsl:attribute name="href">/s3/cgi-bin/get.cgi?bucket=<xsl:value-of select="//meta/bucketname"/>&amp;key=<xsl:for-each select="//meta/path"><xsl:value-of select="."/>/</xsl:for-each><xsl:value-of select="name"/></xsl:attribute>
 										<xsl:value-of select="name"/>
 									</xsl:element>
 								</td>
