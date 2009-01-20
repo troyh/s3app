@@ -59,32 +59,9 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -
 			-e '$a</contents>' \
 			> "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml"
 
-		if [ ! -s "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml" ]; then
-			echo "Empty XML: $BUCKETS_DIR/$BUCKET/$CDIR/index.xml";
-		else
-			# echo "Created $BUCKETS_DIR/$BUCKET/$CDIR/index.xml";
-			
-			cat "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml" \
-				| xmlstarlet sel -t -m "//dir/name" -v . -n \
-				| sed -e '/^\s*$/d' \
-				| while read FOO; do
-			
-				# DIR=`echo "$DIR" | perl -MHTML::Entities -ne 'print encode_entities($_);'`;
-				FOO=`echo "$FOO" | perl -MHTML::Entities -ne 'print encode_entities($_);' | sed -e 's/&igrave;/\&#236;/gi'`;
-			
-				NUMFILES=`xmlstarlet sel -t -v "count(//contents/key[starts-with(name,&quot;$DIR$FOO&quot;)])" $XMLDIR/$BUCKET.xml`
-				SIZE=`xmlstarlet sel -t -v "sum(//contents/key[starts-with(name,&quot;$DIR$FOO&quot;)]/@size)" $XMLDIR/$BUCKET.xml`
+		# echo "Created $BUCKETS_DIR/$BUCKET/$CDIR/index.xml";
 
-				SIZE=`echo "$SIZE" | sed -e 's/e[+-]\([0-9][0-9]*\)/*10^\1/g' | bc`;
+		./file_counts.sh "$BUCKET" "$DIR" "$CDIR";
 
-					cat "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml" \
-						| xmlstarlet ed -d "//dir[name='$FOO']/@files" \
-						| xmlstarlet ed -d "//dir[name='$FOO']/@size" \
-						| xmlstarlet ed -i "//dir[name='$FOO']" -t attr -n files -v $NUMFILES \
-						| xmlstarlet ed -i "//dir[name='$FOO']" -t attr -n size -v $SIZE \
-						> "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml"
-			
-			done
-		fi
 	done
 done
