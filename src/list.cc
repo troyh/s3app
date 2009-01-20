@@ -209,7 +209,17 @@ S3Status my_S3ListServiceCallback(const char *ownerId, const char *ownerDisplayN
 	if (data && data->count==0 && data->xmltag)
 	{
 		xmlTextWriterStartElement(data->xmlwriter,data->xmltag);
+		
+		xmlTextWriterStartElement(data->xmlwriter,BAD_CAST "meta");
+		char datetime[32];
+		time_t now=time(0);
+		struct tm tm;
+		localtime_r(&now,&tm);
+		sprintf(datetime,"%04d-%02d-%02dT%02d:%02d:%02d",tm.tm_year+1900,tm.tm_mon+1,tm.tm_mday,tm.tm_hour,tm.tm_min,tm.tm_sec);
+		xmlTextWriterWriteElement(data->xmlwriter,BAD_CAST "doctime",BAD_CAST datetime);
+		xmlTextWriterEndElement(data->xmlwriter);
 	}
+
 
 	xmlTextWriterStartElement(data->xmlwriter,BAD_CAST "bucket");
 		xmlTextWriterWriteElement(data->xmlwriter,BAD_CAST "creationdate", BinaryToXMLChar(creationDateSeconds));

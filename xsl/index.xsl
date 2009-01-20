@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
+<xsl:stylesheet version="1.0" 
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template match="//meta/path">
 	<xsl:variable name="n" select="position()"/>
@@ -50,6 +50,7 @@
 				<table>
 					<tr>
 						<th>Name</th>
+						<th>Files</th>
 						<th>Size (MB)</th>
 						<th>Time</th>
 						<th>MD5</th>
@@ -76,16 +77,25 @@
 							</xsl:when>
 						</xsl:choose>
 						<td>
+							<xsl:if test="name()='dir'">
+								<xsl:value-of select="format-number(@files,'#,##0')"/>
+							</xsl:if>
+						</td>
+						<td>
 							<xsl:value-of select="format-number(@size div (1024*1024),'#,##0.00')"/>
 						</td>
 						<td>
-							<xsl:value-of select="@lastmodified"/>
+							<xsl:if test="name()='key'">
+								<xsl:value-of select="@lastmodified"/>
+							</xsl:if>
 						</td>
 						<td>
-							<xsl:value-of select="@eTag"/>
+							<xsl:if test="name()='key'">
+								<xsl:value-of select="@eTag"/>
+							</xsl:if>
 						</td>
 						<td>
-							<xsl:value-of select="format-number(@size div (1024*1024*1024) * .15,'$#,##0.0000')"/>
+								<xsl:value-of select="format-number(@size div (1024*1024*1024) * .15,'$#,##0.0000')"/>
 						</td>
 					</tr>
 					</xsl:for-each>
@@ -97,6 +107,9 @@
 						<th><xsl:value-of select="format-number(sum(//contents/key/@size) div (1024*1024*1024) * .15,'$#,##0.0000')"/></th>
 					</tr>
 				</table>
+			</div>
+			<div>
+				Updated: <xsl:value-of select="//meta/doctime"/>
 			</div>
 		</body>
 	</html>
