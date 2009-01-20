@@ -11,18 +11,19 @@
 
 using namespace std;
 
-struct _mt {
+struct MIME_TYPE {
 	const char* ext;
 	string type;
+	bool send_content_disposition;
 }
 mime_types[]=
 {
-	{ "", string("application/octet-stream") },
-	{ "jpg",  string("image/jpeg") },
-	{ "jpeg", string("image/jpeg") },
-	{ "gif",  string("image/gif") },
-	{ "html",  string("text/html") },
-	{ "xml",  string("text/xml") }
+	{ "", string("application/octet-stream"), true },
+	{ "jpg",  string("image/jpeg"), false },
+	{ "jpeg", string("image/jpeg"), false },
+	{ "gif",  string("image/gif"), false },
+	{ "html",  string("text/html"), false },
+	{ "xml",  string("text/xml"), false }
 };
 
 class Config
@@ -65,7 +66,7 @@ const char* get_filename(const string& key)
 	return key.c_str();
 }
 
-const string& get_mime_type(const string& key)
+const MIME_TYPE* get_mime_type(const string& key)
 {
 	const char* p=strrchr(key.c_str(),'.');
 	if (p)
@@ -73,10 +74,10 @@ const string& get_mime_type(const string& key)
 		for (size_t i=1;i<(sizeof(mime_types)/sizeof(mime_types[0]));++i)
 		{
 			if (!strcasecmp(p+1,mime_types[i].ext))
-				return mime_types[i].type;
+				return &mime_types[i];
 		}
 	}
-	return mime_types[0].type;
+	return &mime_types[0];
 }
 
 S3Status my_S3ResponsePropertiesCallback(const S3ResponseProperties *properties, void *callbackData)
@@ -137,8 +138,10 @@ int main()
 			handler.responseHandler=rhandler;
 			handler.getObjectDataCallback=my_S3GetObjectDataCallback;
 			
-			cout << "Content-Disposition: attachment; filename=" << get_filename(key) << endl;
-			cgicc::HTTPContentHeader ct=cgicc::HTTPContentHeader(get_mime_type(key));
+			const MIME_TYPE* mt=get_mime_type(key);
+			if (mt->send_content_disposition)
+				cout << "Content-Disposition: attachment; filename=" << get_filename(key) << endl;
+			cgicc::HTTPContentHeader ct=cgicc::HTTPContentHeader(mt->type);
 			ct.render(cout);
 			
 			S3_get_object(&context,key.c_str(),NULL,0,0,NULL,&handler,0);
