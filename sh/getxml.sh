@@ -25,7 +25,9 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 		
 	done
 	# Finally, rotate the existing XML file
-	cp $XMLDIR/$BUCKET.xml $XMLDIR/$BUCKET.xml.0
+	if [ -f $XMLDIR/$BUCKET.xml ]; then
+		cp $XMLDIR/$BUCKET.xml $XMLDIR/$BUCKET.xml.0
+	fi
 
 	# Get new one
 	echo "Getting contents of $BUCKET";
