@@ -71,6 +71,13 @@
 			</div>
 			<div>See <a href="http://aws.amazon.com/s3/#pricing">S3 pricing</a> for current costs.</div>
 			
+			<div>
+				<form method="post" action="/s3/cgi-bin/create_bucket.cgi">
+					New bucket: <input type="text" name="name" size="30" />
+					<input type="button" value="Create" />
+				</form>
+			</div>
+			
 			<xsl:apply-templates select="document('../changelog.xml')" mode="changelog"/>
 			
 		</body>

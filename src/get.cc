@@ -9,6 +9,8 @@
 #include <libs3.h>
 #include <libxml/xmlwriter.h>
 
+#include "Config.h"
+
 using namespace std;
 
 struct MIME_TYPE {
@@ -25,36 +27,6 @@ mime_types[]=
 	{ "html",  string("text/html"), false },
 	{ "xml",  string("text/xml"), false }
 };
-
-class Config
-{
-	map<string,string> m_map;
-public:
-	Config();
-	~Config() {}
-	
-	const string& get(string s);
-	const char* getptr(string s);
-};
-
-Config::Config()
-{
-	string s3key,s3secret;
-	ifstream aws("../conf/s3.conf");
-	aws >> s3key >> s3secret;
-	m_map["S3AccessKey"]=s3key;
-	m_map["S3SecretAccessKey"]=s3secret;
-}
-
-const string& Config::get(string s)
-{
-	return m_map[s];
-}
-
-const char* Config::getptr(string s)
-{
-	return m_map[s].c_str();
-}
 
 const char* get_filename(const string& key)
 {
