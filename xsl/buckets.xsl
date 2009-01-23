@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	
+<xsl:template match="/" mode="changelog">
+	<h1>ChangeLog</h1>
+	<table id="changelog">
+	<xsl:for-each select="//changelog/bucket/key">
+		<tr>
+			<td><xsl:value-of select="@datetime"/></td>
+			<td>
+				<xsl:choose>
+					<xsl:when test="@change='deleted'">D</xsl:when>
+					<xsl:when test="@change='added'">N</xsl:when>
+					<xsl:when test="@change='updated'">U</xsl:when>
+				</xsl:choose>
+			</td>
+			<td><xsl:value-of select="../@name"/>/<xsl:value-of select="."/></td>
+		</tr>
+	</xsl:for-each>
+	</table>
+		
+	
+</xsl:template>
 
 <xsl:template match="/">
 	<html>
@@ -48,6 +69,9 @@
 				Updated: <xsl:value-of select="//meta/doctime"/>
 			</div>
 			<div>See <a href="http://aws.amazon.com/s3/#pricing">S3 pricing</a> for current costs.</div>
+			
+			<xsl:apply-templates select="document('../changelog.xml')" mode="changelog"/>
+			
 		</body>
 	</html>
 </xsl:template>

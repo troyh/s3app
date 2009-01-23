@@ -37,7 +37,9 @@ cat "$XML_FILE" \
 		| xmlstarlet ed -d "//dir[$ITER]/@size" \
 		| xmlstarlet ed -i "//dir[$ITER]" -t attr -n files -v $NUMFILES \
 		| xmlstarlet ed -i "//dir[$ITER]" -t attr -n size -v $SIZE \
-		> "$XML_FILE"
+		> "$XML_FILE.new"
+	
+	mv "$XML_FILE.new" "$XML_FILE";
 	
 	let ITER=$((ITER+1));
 

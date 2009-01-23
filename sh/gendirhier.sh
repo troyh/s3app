@@ -57,7 +57,9 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -
 			</meta>\
 			" \
 			-e '$a</contents>' \
-			> "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml"
+			> "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml.new";
+			
+		mv "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml.new" "$BUCKETS_DIR/$BUCKET/$CDIR/index.xml";
 
 		# echo "Created $BUCKETS_DIR/$BUCKET/$CDIR/index.xml";
 

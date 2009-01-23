@@ -101,10 +101,11 @@
 					</xsl:for-each>
 					<tr>
 						<th>Total</th>
-						<th><xsl:value-of select="format-number(sum(//contents/key/@size) div (1024*1024),'#,##0.00')"/></th>
+						<th><xsl:value-of select="format-number(sum(//contents/dir/@files) + count(//contents/key),'#,##0')"/></th>
+						<th><xsl:value-of select="format-number((sum(//contents/key/@size) + sum(//contents/dir/@size)) div (1024*1024),'#,##0.00')"/></th>
 						<th></th>
 						<th></th>
-						<th><xsl:value-of select="format-number(sum(//contents/key/@size) div (1024*1024*1024) * .15,'$#,##0.0000')"/></th>
+						<th><xsl:value-of select="format-number((sum(//contents/key/@size)+sum(//contents/dir/@files)) div (1024*1024*1024) * .15,'$#,##0.0000')"/></th>
 					</tr>
 				</table>
 			</div>

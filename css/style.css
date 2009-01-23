@@ -16,37 +16,51 @@ table
 	padding:0px;
 	border:0px solid black;
 	width:100%;
+	font-size:1em;
+	border-collapse:collapse;
 }
 
 th
 {
-	border-bottom:1px solid #eee;
+	border-bottom:1px solid #ddd;
 	margin:0px;
 	padding:0px;
 }
 
 th ~ th
 {
+	text-align:center;
+}
+
+tr:last-child th
+{
+	background: #ccc;
+}
+
+tr:last-child th ~ th
+{
 	text-align:right;
 }
 
+tr:nth-child(even)
+{
+	background:#eee;
+	padding:0;
+	margin:0;
+}
 
 td
 {
-	border-bottom:1px solid #eee;
+	border:1px solid #ddd;
 	margin:0px;
-	padding:0px;
+	padding:2px;
+/*	width:30%;*/
 }
 
 td ~ td
 {
 	text-align:right;
-}
-
-tr:nth-last-child(-n+1) td
-{
-	border-top:1px solid #333;
-	background:silver;
+	width:10em;
 }
 
 td.dir
@@ -62,4 +76,21 @@ td a
 td a:hover
 {
 	text-decoration:underline;
+}
+
+table#changelog td
+{
+	font-size:.9em;
+	width:15px;
+}
+table#changelog td + td
+{
+	width:15px;
+	text-align:center;
+}
+
+table#changelog td ~ td
+{
+	white-space:nowrap;
+	text-align:left;
 }
