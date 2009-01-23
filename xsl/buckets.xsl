@@ -5,6 +5,7 @@
 	<h1>ChangeLog</h1>
 	<table id="changelog">
 	<xsl:for-each select="//changelog/bucket/key">
+		<xsl:sort select="@datetime" order="descending" />
 		<tr>
 			<td><xsl:value-of select="@datetime"/></td>
 			<td>
