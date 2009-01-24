@@ -47,3 +47,5 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 		> $S3ROOT/index.xml
 
 done
+
+./combine_changelogs.sh
