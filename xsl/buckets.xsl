@@ -6,6 +6,7 @@
 	<table id="changelog">
 	<xsl:for-each select="//changelog/bucket/key">
 		<xsl:sort select="@datetime" order="descending" />
+		<xsl:if test="position() &lt; 100">
 		<tr>
 			<td><xsl:value-of select="@datetime"/></td>
 			<td>
@@ -17,8 +18,11 @@
 			</td>
 			<td><xsl:value-of select="../@name"/>/<xsl:value-of select="."/></td>
 		</tr>
+		</xsl:if>
 	</xsl:for-each>
 	</table>
+	
+	<div><a href="changelog.xml">See more</a></div>
 		
 	
 </xsl:template>
