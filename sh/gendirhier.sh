@@ -42,8 +42,9 @@ EOF
 	else
 	
 		# Get list of directories
-		xmlstarlet sel -t -m //contents/key -v name -n $XMLDIR/$BUCKET.xml | sed -e '/^\s*$/d' \
-			| sed -e 's:/[^/]*$:/:' \
+		xmlstarlet sel -t -m //contents/key -v name -n $XMLDIR/$BUCKET.xml \
+			| sed -e '/^\s*$/d' \
+			| sed -e 's:/[^/]*$:/:' -e 's:^//*::' \
 			| sort -u \
 			| perl -ne '@parts=split(/\//);for($i=0;$i<=$#parts;++$i){for($j=0;$j<$i;++$j){print $parts[$j]."/";}print "\n";}'\
 			| sort -u \
