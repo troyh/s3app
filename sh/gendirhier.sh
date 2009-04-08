@@ -27,7 +27,7 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -
 	KEYCOUNT=`xmlstarlet sel -t -v "count(//contents/key)" $XMLDIR/$BUCKET.xml`;
 	if [ $KEYCOUNT == 0 ]; then
 
-		cat - | xmlstarlet fo > "$BUCKETS_DIR/$BUCKET/index.xml.new" <<EOF
+		xmlstarlet fo > "$BUCKETS_DIR/$BUCKET/index.xml.new" <<EOF
 			<?xml-stylesheet type="text/xsl" href="/s3/xsl/index.xsl"?>
 			<contents>
 			<meta>
@@ -36,7 +36,7 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -
 			</meta>
 			</contents>
 EOF
-		
+
 		mv "$BUCKETS_DIR/$BUCKET/index.xml.new" "$BUCKETS_DIR/$BUCKET/index.xml";
 
 	else
@@ -48,7 +48,7 @@ EOF
 			| perl -ne '@parts=split(/\//);for($i=0;$i<=$#parts;++$i){for($j=0;$j<$i;++$j){print $parts[$j]."/";}print "\n";}'\
 			| sort -u \
 			| while read DIR; do
-	
+
 			# For each directory, create an index.xml in that directory that contains the files and subdirectories
 
 			# Create the directory if it doesn't already exist
