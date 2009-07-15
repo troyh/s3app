@@ -9,6 +9,10 @@ if [ "x$1" != "x" ]; then
 	SINGLE_BUCKET=$1;
 fi
 	
+if [ ! -s $S3ROOT/index.xml ]; then
+	# Not sure why this happens, but sometimes the root index.xml is empty
+	exit;
+fi
 
 xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -e '/^\s*$/d' \
 	| while read BUCKET; do
@@ -19,7 +23,7 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -
 		fi
 	fi
 		
-	echo "Bucket: $BUCKET";
+	logger -t gendirhier.sh -s "Bucket: $BUCKET";
 	if [ ! -d $BUCKETS_DIR/$BUCKET ]; then
 		mkdir $BUCKETS_DIR/$BUCKET;
 	fi
@@ -55,7 +59,7 @@ EOF
 			# Create the directory if it doesn't already exist
 			CDIR=`echo "$DIR" | sed -e 's/&amp;/\\&/g'`;
 			if [ ! -d "$BUCKETS_DIR/$BUCKET/$CDIR" ]; then
-				echo "Creating directory $BUCKETS_DIR/$BUCKET/$CDIR";
+				logger -t gendirhier.sh -s "Creating directory $BUCKETS_DIR/$BUCKET/$CDIR";
 				mkdir -p "$BUCKETS_DIR/$BUCKET/$CDIR";
 			fi
 

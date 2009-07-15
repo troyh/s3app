@@ -31,7 +31,7 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 
 	# Get new one
 	echo "Getting contents of $BUCKET";
-	s3 ls $BUCKET > $XMLDIR/$BUCKET.xml
+	s3 -x ls $BUCKET > $XMLDIR/$BUCKET.xml
 	
 	NUMFILES=`xmlstarlet sel -t -v "count(//contents/key)" $XMLDIR/$BUCKET.xml`
 	SIZE=`xmlstarlet sel -t -v "sum(//contents/key/@size)" $XMLDIR/$BUCKET.xml`
