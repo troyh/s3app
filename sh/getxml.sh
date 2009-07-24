@@ -6,11 +6,9 @@ XMLDIR="$S3ROOT/xml"
 TMPDIR="$S3ROOT/tmp"
 CGIBINDIR="$S3ROOT/cgi-bin"
 
-$CGIBINDIR/list > $S3ROOT/index.xml
 
-xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
-	| sed -e '/^\s*$/d' \
-	| while read BUCKET; do
+function processbucket () {
+	BUCKET=$1;
 	
 	# Rotate previous XML file(s)
 	find $XMLDIR/ -type f -regex "$XMLDIR/$BUCKET.xml\.[0-9]+" | sed -e 's/^.*\.\([0-9][0-9]*\)$/\1/' \
@@ -31,7 +29,7 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 
 	# Get new one
 	echo "Getting contents of $BUCKET";
-	s3 -x ls $BUCKET > $XMLDIR/$BUCKET.xml
+	s3 lsxml $BUCKET > $XMLDIR/$BUCKET.xml
 	
 	NUMFILES=`xmlstarlet sel -t -v "count(//contents/key)" $XMLDIR/$BUCKET.xml`
 	SIZE=`xmlstarlet sel -t -v "sum(//contents/key/@size)" $XMLDIR/$BUCKET.xml`
@@ -44,8 +42,29 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 		| xmlstarlet ed -d "//bucket_list/bucket[name='$BUCKET']/@size" \
 		| xmlstarlet ed -i "//bucket_list/bucket[name='$BUCKET']" -t attr -n files -v $NUMFILES \
 		| xmlstarlet ed -i "//bucket_list/bucket[name='$BUCKET']" -t attr -n size -v $SIZE \
-		> $S3ROOT/index.xml
+		> $S3ROOT/index.xml.new
 
-done
+	if [ -s $S3ROOT/index.xml.new ]; then 
+		mv $S3ROOT/index.xml.new $S3ROOT/index.xml; 
+	fi
 
-./combine_changelogs.sh
+}
+
+
+if [ ! -z "$1" ]; then
+	processbucket "$1";
+else
+
+	$CGIBINDIR/list > $S3ROOT/index.xml
+
+	xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
+		| sed -e '/^\s*$/d' \
+		| while read BUCKET; do
+	
+		processbucket $BUCKET;
+	
+	done
+
+	./combine_changelogs.sh
+
+fi
