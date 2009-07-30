@@ -14,6 +14,12 @@ if [ ! -s $S3ROOT/index.xml ]; then
 	exit;
 fi
 
+if [ -z $CRON_RUNNING ]; then
+	LOGGER="logger -t gendirhier.sh -s";
+else
+	LOGGER="logger -t gendirhier.sh";
+fi
+
 xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -e '/^\s*$/d' \
 	| while read BUCKET; do
 	
@@ -23,7 +29,7 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml | sed -
 		fi
 	fi
 		
-	logger -t gendirhier.sh -s "Bucket: $BUCKET";
+	$LOGGER "Bucket: $BUCKET";
 	if [ ! -d $BUCKETS_DIR/$BUCKET ]; then
 		mkdir $BUCKETS_DIR/$BUCKET;
 	fi
@@ -59,7 +65,7 @@ EOF
 			# Create the directory if it doesn't already exist
 			CDIR=`echo "$DIR" | sed -e 's/&amp;/\\&/g'`;
 			if [ ! -d "$BUCKETS_DIR/$BUCKET/$CDIR" ]; then
-				logger -t gendirhier.sh -s "Creating directory $BUCKETS_DIR/$BUCKET/$CDIR";
+				$LOGGER "Creating directory $BUCKETS_DIR/$BUCKET/$CDIR";
 				mkdir -p "$BUCKETS_DIR/$BUCKET/$CDIR";
 			fi
 
