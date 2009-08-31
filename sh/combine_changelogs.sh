@@ -27,7 +27,6 @@ xmlstarlet sel -t -m "//bucket_list/bucket" -v name -n $S3ROOT/index.xml \
 	
 done
 
-
 if [ -s $S3ROOT/changelog.xml ]; then
 	cat $S3ROOT/changelog.xml | xmlstarlet sel -t -m "//changelog" -c child::* > $TMPDIR/old_changelogs
 fi

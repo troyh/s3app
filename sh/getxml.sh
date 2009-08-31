@@ -28,7 +28,7 @@ function processbucket () {
 	fi
 
 	# Get new one
-	echo "Getting contents of $BUCKET";
+	if [ -z $CRON_RUNNING ]; then echo "Getting contents of $BUCKET"; fi
 	s3 lsxml $BUCKET > $XMLDIR/$BUCKET.xml
 	
 	NUMFILES=`xmlstarlet sel -t -v "count(//contents/key)" $XMLDIR/$BUCKET.xml`
